@@ -1,0 +1,74 @@
+Sub Multiple_year_stock_data():
+
+    ' Loop through all of the worksheets
+    For Each ws In Worksheets
+
+        ' Column Labels
+        ws.Range("I1").Value = "Ticker"
+        ws.Range("J1").Value = "Yearly Change"
+        ws.Range("K1").Value = "Percent Change"
+        ws.Range("L1").Value = "Total Stock Volume"
+
+        ' Declare Variables
+        Dim TickerName As String
+        Dim LastRow As Long
+        Dim SummaryTableRow As Long
+        SummaryTableRow = 2
+        Dim YearlyOpen As Double
+        Dim YearlyClose As Double
+        Dim YearlyChange As Double
+        Dim PreviousAmount As Long
+        PreviousAmount = 2
+        Dim PercentChange As Double
+        Dim TotalStockVolume As Double
+        TotalStockVolume = 0
+        
+        ' Define all rows
+        LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+        
+     For i = 2 To LastRow
+
+                ' Set Total Stock Volume
+                TotalStockVolume = TotalStockVolume + ws.Cells(i, 7).Value
+                If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+
+                ' Set Ticker
+                TickerName = ws.Cells(i, 1).Value
+                ws.Range("I" & SummaryTableRow).Value = TickerName
+                ws.Range("L" & SummaryTableRow).Value = TotalStockVolume
+                TotalTickerVolume = 0
+
+
+                ' Set Yearly Open, Yearly Close, and Yearly Change
+                YearlyOpen = ws.Range("C" & PreviousAmount)
+                YearlyClose = ws.Range("F" & i)
+                YearlyChange = YearlyClose - YearlyOpen
+                ws.Range("J" & SummaryTableRow).Value = YearlyChange
+
+                ' Calculate Percent Change
+                If YearlyOpen = 0 Then
+                    PercentChange = 0
+                Else
+                    YearlyOpen = ws.Range("C" & PreviousAmount)
+                    PercentChange = YearlyChange / YearlyOpen
+                End If
+                ' Format Percentages
+                ws.Range("K" & SummaryTableRow).NumberFormat = "0.00%"
+                ws.Range("K" & SummaryTableRow).Value = PercentChange
+
+                ' Conditional Formatting
+                If ws.Range("J" & SummaryTableRow).Value >= 0 Then
+                    ws.Range("J" & SummaryTableRow).Interior.ColorIndex = 4
+                Else
+                    ws.Range("J" & SummaryTableRow).Interior.ColorIndex = 3
+                End If
+            
+                SummaryTableRow = SummaryTableRow + 1
+                PreviousAmount = i + 1
+                End If
+            Next i
+           
+
+    Next ws
+
+End Sub
